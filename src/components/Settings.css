@@ -1,0 +1,42 @@
+.settings {
+  min-height: 100vh;
+  background: var(--tgui--bg_color, #fff);
+  padding-bottom: 80px;
+}
+
+.settings-icon {
+  font-size: 24px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-chevron {
+  color: var(--tgui--subtitle_text_color, #999);
+  font-size: 20px;
+  margin-left: 4px;
+}
+
+.settings-cell-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-value {
+  color: var(--tgui--subtitle_text_color, #999);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.settings-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: var(--tgui--bg_color, #fff);
+  border-top: 1px solid var(--tgui--secondary_bg_color, #e0e0e0);
+}

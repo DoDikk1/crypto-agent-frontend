@@ -1,0 +1,7 @@
+.message-context-menu {
+  padding: 0;
+}
+
+.message-context-menu-delete {
+  color: var(--tgui--destructive_text_color, #ff3b30);
+}
