@@ -13,7 +13,7 @@ function App() {
   const [coins, setCoins] = useState<Coin[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalUsd, setTotalUsd] = useState(0);
-  const [showRisk, setShowRisk] = useState(false); // ← ПЕРЕНЁС СЮДА ИЗ useEffect
+  const [showRisk, setShowRisk] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL || 'https://crypto-agent-api.onrender.com';
   const USER_ID = '8437583351';
@@ -38,6 +38,14 @@ function App() {
   useEffect(() => {
     fetchPortfolio();
   }, []);
+
+  // Форматтер для чисел
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  };
 
   // Стили для тёмной темы
   const styles = {
@@ -181,7 +189,9 @@ function App() {
       {!showRisk && (
         <div style={styles.totalCard}>
           <div style={styles.totalLabel}>Общая стоимость портфеля</div>
-          <div style={styles.totalValue}>${totalUsd.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <div style={styles.totalValue}>
+            ${formatCurrency(totalUsd)}
+          </div>
         </div>
       )}
 
@@ -211,11 +221,15 @@ function App() {
                 </div>
                 <div>
                   <div>Цена</div>
-                  <div style={styles.coinDetailValue}>${coin.price?.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div style={styles.coinDetailValue}>
+                    ${formatCurrency(coin.price)}
+                  </div>
                 </div>
                 <div>
                   <div>Стоимость</div>
-                  <div style={styles.coinDetailValue}>${(coin.amount * coin.price).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div style={styles.coinDetailValue}>
+                    ${formatCurrency(coin.amount * coin.price)}
+                  </div>
                 </div>
                 <div>
                   <div>Доля</div>
