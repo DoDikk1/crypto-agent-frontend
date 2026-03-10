@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
-import { AppRoot, Section, Cell, Button, Spinner } from '@telegram-apps/telegram-ui';
+
+// 1. СОЗДАЁМ ИНТЕРФЕЙС ДЛЯ МОНЕТЫ
+interface Coin {
+  symbol: string;
+  price: number;
+  amount: number;
+  total_value: number;
+  change: number;
+}
 
 function App() {
-  const [coins, setCoins] = useState([]);
+  // 2. УКАЗЫВАЕМ ТИП ДЛЯ useState
+  const [coins, setCoins] = useState<Coin[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalUsd, setTotalUsd] = useState(0);
 
-  // VITE переменные
   const API_URL = import.meta.env.VITE_API_URL || 'https://crypto-agent-api.onrender.com';
   const USER_ID = '8437583351';
 
@@ -32,40 +40,44 @@ function App() {
   }, []);
 
   return (
-    <AppRoot>
-      <div style={{ padding: '20px' }}>
-        <Section header="💰 Крипто-агент">
-          <Cell>
-            <strong>Общая стоимость:</strong> ${totalUsd.toFixed(2)}
-          </Cell>
+    <div style={{ padding: '20px', fontFamily: 'system-ui, sans-serif' }}>
+      <h1>💰 Крипто-агент</h1>
+      
+      {loading ? (
+        <p>Загрузка...</p>
+      ) : (
+        <>
+          <h2>Общая стоимость: ${totalUsd.toFixed(2)}</h2>
           
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '20px' }}>
-              <Spinner size="m" />
+          {coins.map((coin) => (
+            <div key={coin.symbol} style={{ 
+              padding: '10px', 
+              margin: '10px 0', 
+              border: '1px solid #ccc', 
+              borderRadius: '8px' 
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <strong>{coin.symbol.replace('USDT', '')}</strong>
+                <span style={{ color: coin.change >= 0 ? 'green' : 'red' }}>
+                  {coin.change > 0 ? '+' : ''}{coin.change}%
+                </span>
+              </div>
+              <div>{coin.amount} шт. по ${coin.price?.toFixed(2) || '0.00'}</div>
+              <div>💰 ${(coin.amount * coin.price).toFixed(2)}</div>
             </div>
-          ) : (
-            coins.map((coin) => (
-              <Cell
-                key={coin.symbol}
-                after={
-                  <span style={{ color: coin.change >= 0 ? 'green' : 'red' }}>
-                    {coin.change > 0 ? '+' : ''}{coin.change}%
-                  </span>
-                }
-              >
-                {coin.symbol.replace('USDT', '')}: {coin.amount} шт.
-                <br />
-                <small>${coin.price.toFixed(2)}</small>
-              </Cell>
-            ))
-          )}
+          ))}
           
-          <Button mode="filled" onClick={fetchPortfolio} style={{ marginTop: '20px' }}>
+          <button onClick={fetchPortfolio} style={{
+            padding: '10px 20px',
+            fontSize: '16px',
+            marginTop: '20px',
+            width: '100%'
+          }}>
             🔄 Обновить цены
-          </Button>
-        </Section>
-      </div>
-    </AppRoot>
+          </button>
+        </>
+      )}
+    </div>
   );
 }
 
