@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import RiskAnalysis from './components/RiskAnalysis';
 
 interface Coin {
   symbol: string;
@@ -12,6 +13,7 @@ function App() {
   const [coins, setCoins] = useState<Coin[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalUsd, setTotalUsd] = useState(0);
+  const [showRisk, setShowRisk] = useState(false); // ← ПЕРЕНЁС СЮДА ИЗ useEffect
 
   const API_URL = import.meta.env.VITE_API_URL || 'https://crypto-agent-api.onrender.com';
   const USER_ID = '8437583351';
@@ -47,7 +49,7 @@ function App() {
       color: '#ffffff',
     },
     header: {
-      color: '#f0b90b', // Binance yellow
+      color: '#f0b90b',
       fontSize: '28px',
       marginBottom: '20px',
       textAlign: 'center' as const,
@@ -128,14 +130,21 @@ function App() {
       height: '200px',
       color: '#888',
     },
-    profit: {
-      color: '#4caf50',
-      fontSize: '14px',
+    tabContainer: {
+      display: 'flex',
+      gap: '10px',
+      marginBottom: '20px',
     },
-    loss: {
-      color: '#f44336',
-      fontSize: '14px',
-    },
+    tabButton: (active: boolean) => ({
+      flex: 1,
+      padding: '10px',
+      background: active ? '#f0b90b' : '#333',
+      color: active ? '#000' : '#fff',
+      border: 'none',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      fontWeight: 'bold' as const,
+    }),
   };
 
   if (loading) {
@@ -152,56 +161,82 @@ function App() {
     <div style={styles.container}>
       <h1 style={styles.header}>🚀 Крипто-агент</h1>
       
-      <div style={styles.totalCard}>
-        <div style={styles.totalLabel}>Общая стоимость портфеля</div>
-        <div style={styles.totalValue}>${totalUsd.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+      {/* Вкладки */}
+      <div style={styles.tabContainer}>
+        <button
+          onClick={() => setShowRisk(false)}
+          style={styles.tabButton(!showRisk)}
+        >
+          📂 Портфель
+        </button>
+        <button
+          onClick={() => setShowRisk(true)}
+          style={styles.tabButton(showRisk)}
+        >
+          📊 Риски
+        </button>
       </div>
 
-      {coins.map((coin) => (
-        <div 
-          key={coin.symbol} 
-          style={styles.coinCard}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-        >
-          <div style={styles.coinHeader}>
-            <span style={styles.coinSymbol}>{coin.symbol.replace('USDT', '')}</span>
-            <span style={styles.coinChange(coin.change)}>
-              {coin.change > 0 ? '+' : ''}{coin.change}%
-            </span>
-          </div>
-          
-          <div style={styles.coinDetails}>
-            <div>
-              <div>Количество</div>
-              <div style={styles.coinDetailValue}>{coin.amount.toFixed(4)}</div>
-            </div>
-            <div>
-              <div>Цена</div>
-              <div style={styles.coinDetailValue}>${coin.price?.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-            </div>
-            <div>
-              <div>Стоимость</div>
-              <div style={styles.coinDetailValue}>${(coin.amount * coin.price).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-            </div>
-            <div>
-              <div>Доля</div>
-              <div style={styles.coinDetailValue}>
-                {((coin.amount * coin.price / totalUsd) * 100).toFixed(1)}%
+      {/* Общая стоимость (показываем только в портфеле) */}
+      {!showRisk && (
+        <div style={styles.totalCard}>
+          <div style={styles.totalLabel}>Общая стоимость портфеля</div>
+          <div style={styles.totalValue}>${totalUsd.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+        </div>
+      )}
+
+      {/* Контент в зависимости от вкладки */}
+      {showRisk ? (
+        <RiskAnalysis coins={coins} />
+      ) : (
+        <>
+          {coins.map((coin) => (
+            <div 
+              key={coin.symbol} 
+              style={styles.coinCard}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              <div style={styles.coinHeader}>
+                <span style={styles.coinSymbol}>{coin.symbol.replace('USDT', '')}</span>
+                <span style={styles.coinChange(coin.change)}>
+                  {coin.change > 0 ? '+' : ''}{coin.change}%
+                </span>
+              </div>
+              
+              <div style={styles.coinDetails}>
+                <div>
+                  <div>Количество</div>
+                  <div style={styles.coinDetailValue}>{coin.amount.toFixed(4)}</div>
+                </div>
+                <div>
+                  <div>Цена</div>
+                  <div style={styles.coinDetailValue}>${coin.price?.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                </div>
+                <div>
+                  <div>Стоимость</div>
+                  <div style={styles.coinDetailValue}>${(coin.amount * coin.price).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                </div>
+                <div>
+                  <div>Доля</div>
+                  <div style={styles.coinDetailValue}>
+                    {((coin.amount * coin.price / totalUsd) * 100).toFixed(1)}%
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      ))}
+          ))}
 
-      <button 
-        onClick={fetchPortfolio} 
-        style={styles.button}
-        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-      >
-        🔄 Обновить цены
-      </button>
+          <button 
+            onClick={fetchPortfolio} 
+            style={styles.button}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            🔄 Обновить цены
+          </button>
+        </>
+      )}
     </div>
   );
 }
