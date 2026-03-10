@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-// 1. СОЗДАЁМ ИНТЕРФЕЙС ДЛЯ МОНЕТЫ
 interface Coin {
   symbol: string;
   price: number;
@@ -10,7 +9,6 @@ interface Coin {
 }
 
 function App() {
-  // 2. УКАЗЫВАЕМ ТИП ДЛЯ useState
   const [coins, setCoins] = useState<Coin[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalUsd, setTotalUsd] = useState(0);
@@ -39,44 +37,171 @@ function App() {
     fetchPortfolio();
   }, []);
 
+  // Стили для тёмной темы
+  const styles = {
+    container: {
+      padding: '20px',
+      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      backgroundColor: '#0a0a0a',
+      minHeight: '100vh',
+      color: '#ffffff',
+    },
+    header: {
+      color: '#f0b90b', // Binance yellow
+      fontSize: '28px',
+      marginBottom: '20px',
+      textAlign: 'center' as const,
+    },
+    totalCard: {
+      background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+      padding: '20px',
+      borderRadius: '16px',
+      marginBottom: '20px',
+      border: '1px solid #333',
+      boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+    },
+    totalLabel: {
+      color: '#888',
+      fontSize: '14px',
+      marginBottom: '5px',
+    },
+    totalValue: {
+      color: '#f0b90b',
+      fontSize: '32px',
+      fontWeight: 'bold' as const,
+    },
+    coinCard: {
+      background: '#1a1a1a',
+      padding: '16px',
+      margin: '12px 0',
+      borderRadius: '12px',
+      border: '1px solid #333',
+      transition: 'transform 0.2s',
+      cursor: 'pointer',
+    },
+    coinHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '10px',
+    },
+    coinSymbol: {
+      fontSize: '18px',
+      fontWeight: 'bold' as const,
+      color: '#fff',
+    },
+    coinChange: (change: number) => ({
+      color: change >= 0 ? '#4caf50' : '#f44336',
+      fontWeight: 'bold' as const,
+      padding: '4px 8px',
+      borderRadius: '20px',
+      background: change >= 0 ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)',
+    }),
+    coinDetails: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '10px',
+      color: '#888',
+      fontSize: '14px',
+    },
+    coinDetailValue: {
+      color: '#fff',
+      fontWeight: '500' as const,
+    },
+    button: {
+      background: '#f0b90b',
+      color: '#000',
+      border: 'none',
+      padding: '14px 20px',
+      fontSize: '16px',
+      fontWeight: 'bold' as const,
+      borderRadius: '12px',
+      marginTop: '20px',
+      width: '100%',
+      cursor: 'pointer',
+      transition: 'opacity 0.2s',
+    },
+    loadingContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '200px',
+      color: '#888',
+    },
+    profit: {
+      color: '#4caf50',
+      fontSize: '14px',
+    },
+    loss: {
+      color: '#f44336',
+      fontSize: '14px',
+    },
+  };
+
+  if (loading) {
+    return (
+      <div style={styles.container}>
+        <div style={styles.loadingContainer}>
+          <div>Загрузка портфеля... 📊</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: '20px', fontFamily: 'system-ui, sans-serif' }}>
-      <h1>💰 Крипто-агент</h1>
+    <div style={styles.container}>
+      <h1 style={styles.header}>🚀 Крипто-агент</h1>
       
-      {loading ? (
-        <p>Загрузка...</p>
-      ) : (
-        <>
-          <h2>Общая стоимость: ${totalUsd.toFixed(2)}</h2>
+      <div style={styles.totalCard}>
+        <div style={styles.totalLabel}>Общая стоимость портфеля</div>
+        <div style={styles.totalValue}>${totalUsd.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+      </div>
+
+      {coins.map((coin) => (
+        <div 
+          key={coin.symbol} 
+          style={styles.coinCard}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+        >
+          <div style={styles.coinHeader}>
+            <span style={styles.coinSymbol}>{coin.symbol.replace('USDT', '')}</span>
+            <span style={styles.coinChange(coin.change)}>
+              {coin.change > 0 ? '+' : ''}{coin.change}%
+            </span>
+          </div>
           
-          {coins.map((coin) => (
-            <div key={coin.symbol} style={{ 
-              padding: '10px', 
-              margin: '10px 0', 
-              border: '1px solid #ccc', 
-              borderRadius: '8px' 
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <strong>{coin.symbol.replace('USDT', '')}</strong>
-                <span style={{ color: coin.change >= 0 ? 'green' : 'red' }}>
-                  {coin.change > 0 ? '+' : ''}{coin.change}%
-                </span>
-              </div>
-              <div>{coin.amount} шт. по ${coin.price?.toFixed(2) || '0.00'}</div>
-              <div>💰 ${(coin.amount * coin.price).toFixed(2)}</div>
+          <div style={styles.coinDetails}>
+            <div>
+              <div>Количество</div>
+              <div style={styles.coinDetailValue}>{coin.amount.toFixed(4)}</div>
             </div>
-          ))}
-          
-          <button onClick={fetchPortfolio} style={{
-            padding: '10px 20px',
-            fontSize: '16px',
-            marginTop: '20px',
-            width: '100%'
-          }}>
-            🔄 Обновить цены
-          </button>
-        </>
-      )}
+            <div>
+              <div>Цена</div>
+              <div style={styles.coinDetailValue}>${coin.price?.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            </div>
+            <div>
+              <div>Стоимость</div>
+              <div style={styles.coinDetailValue}>${(coin.amount * coin.price).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            </div>
+            <div>
+              <div>Доля</div>
+              <div style={styles.coinDetailValue}>
+                {((coin.amount * coin.price / totalUsd) * 100).toFixed(1)}%
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      <button 
+        onClick={fetchPortfolio} 
+        style={styles.button}
+        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+      >
+        🔄 Обновить цены
+      </button>
     </div>
   );
 }
