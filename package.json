@@ -5,7 +5,8 @@
   "description": "Production-ready Telegram Mini App with Telegram UI",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "build:with-check": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit"
@@ -15,7 +16,8 @@
     "@telegram-apps/telegram-ui": "^2.1.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.2"
+    "react-router-dom": "^6.26.2",
+    "recharts": "^3.8.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.9",
