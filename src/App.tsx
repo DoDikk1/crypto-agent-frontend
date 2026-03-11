@@ -36,16 +36,18 @@ function App() {
     }
   };
 
-// Автообновление каждые 30 секунд
-useEffect(() => {
-  const interval = setInterval(() => {
+  useEffect(() => {
     fetchPortfolio();
-  }, 30000); // 30 секунд
+  }, []);
 
-  return () => clearInterval(interval); // очистка при размонтировании
-}, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchPortfolio();
+    }, 30000);
 
-  // Форматтер для чисел
+    return () => clearInterval(interval);
+  }, []);
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('ru-RU', {
       minimumFractionDigits: 2,
@@ -53,7 +55,6 @@ useEffect(() => {
     }).format(value);
   };
 
-  // Стили для тёмной темы
   const styles = {
     container: {
       padding: '20px',
@@ -175,7 +176,6 @@ useEffect(() => {
     <div style={styles.container}>
       <h1 style={styles.header}>🚀 Крипто-агент</h1>
       
-      {/* Вкладки */}
       <div style={styles.tabContainer}>
         <button
           onClick={() => setActiveTab('portfolio')}
@@ -197,7 +197,6 @@ useEffect(() => {
         </button>
       </div>
 
-      {/* Общая стоимость (показываем только в портфеле) */}
       {activeTab === 'portfolio' && (
         <div style={styles.totalCard}>
           <div style={styles.totalLabel}>Общая стоимость портфеля</div>
@@ -207,28 +206,10 @@ useEffect(() => {
         </div>
       )}
 
-      {activeTab === 'risk' ? (
-  <RiskAnalysis coins={coins} />
-) : activeTab === 'history' ? (
-  // Заглушка вместо компонента
-  <div style={{ 
-    marginTop: '20px',
-    padding: '20px',
-    background: '#1a1a1a',
-    borderRadius: '12px',
-    border: '1px solid #333',
-    color: '#fff',
-    textAlign: 'center'
-  }}>
-    <h3 style={{ color: '#f0b90b' }}>📜 История сделок</h3>
-    <p>Раздел в разработке</p>
-    <p style={{ color: '#888', fontSize: '14px' }}>
-      Скоро здесь появится история ваших сделок
-    </p>
-  </div>
-) : (
-  // ... портфель
-)}
+      {activeTab === 'risk' && <RiskAnalysis coins={coins} />}
+      {activeTab === 'history' && <TradeHistory coins={coins} />}
+
+      {activeTab === 'portfolio' && (
         <>
           {coins.map((coin) => (
             <div 
