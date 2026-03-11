@@ -1,14 +1,25 @@
 import { useState, useEffect } from 'react';
 
+// Тип для монеты из портфеля
+interface Coin {
+  symbol: string;
+  price: number;
+  amount: number;
+  total_value: number;
+  change: number;
+}
+
+// Тип для данных риска
 interface RiskData {
   symbol: string;
-  volatility: number;
+  volatility: string;
   volume: number;
   riskLevel: 'Низкий' | 'Средний' | 'Высокий';
 }
 
+// Тип для пропсов компонента
 interface Props {
-  coins: any[];
+  coins: Coin[];
 }
 
 function RiskAnalysis({ coins }: Props) {
@@ -18,7 +29,7 @@ function RiskAnalysis({ coins }: Props) {
   const fetchRiskData = async () => {
     setLoading(true);
     try {
-      const mockData = coins.map(coin => ({
+      const mockData: RiskData[] = coins.map(coin => ({
         symbol: coin.symbol,
         volatility: (Math.random() * 5).toFixed(2),
         volume: Math.floor(Math.random() * 1000000),
@@ -38,7 +49,7 @@ function RiskAnalysis({ coins }: Props) {
     }
   }, [coins]);
 
-  const getRiskColor = (level: string) => {
+  const getRiskColor = (level: string): string => {
     switch(level) {
       case 'Низкий': return '#4caf50';
       case 'Средний': return '#ff9800';
