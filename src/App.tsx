@@ -198,18 +198,6 @@ function App() {
       </div>
 
       {activeTab === 'portfolio' && (
-        <div style={styles.totalCard}>
-          <div style={styles.totalLabel}>Общая стоимость портфеля</div>
-          <div style={styles.totalValue}>
-            ${formatCurrency(totalUsd)}
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'risk' && <RiskAnalysis coins={coins} />}
-      {activeTab === 'history' && <TradeHistory coins={coins} />}
-
-      {activeTab === 'portfolio' && (
         <>
           {coins.map((coin) => (
             <div 
