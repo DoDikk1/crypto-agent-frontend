@@ -207,12 +207,28 @@ useEffect(() => {
         </div>
       )}
 
-      {/* Контент в зависимости от вкладки */}
       {activeTab === 'risk' ? (
-        <RiskAnalysis coins={coins} />
-      ) : activeTab === 'history' ? (
-        <TradeHistory coins={coins} />
-      ) : (
+  <RiskAnalysis coins={coins} />
+) : activeTab === 'history' ? (
+  // Заглушка вместо компонента
+  <div style={{ 
+    marginTop: '20px',
+    padding: '20px',
+    background: '#1a1a1a',
+    borderRadius: '12px',
+    border: '1px solid #333',
+    color: '#fff',
+    textAlign: 'center'
+  }}>
+    <h3 style={{ color: '#f0b90b' }}>📜 История сделок</h3>
+    <p>Раздел в разработке</p>
+    <p style={{ color: '#888', fontSize: '14px' }}>
+      Скоро здесь появится история ваших сделок
+    </p>
+  </div>
+) : (
+  // ... портфель
+)}
         <>
           {coins.map((coin) => (
             <div 
