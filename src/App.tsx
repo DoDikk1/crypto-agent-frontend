@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import RiskAnalysis from './components/RiskAnalysis';
+import TradeHistory from './components/TradeHistory';
 
 interface Coin {
   symbol: string;
@@ -13,7 +14,7 @@ function App() {
   const [coins, setCoins] = useState<Coin[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalUsd, setTotalUsd] = useState(0);
-  const [showRisk, setShowRisk] = useState(false);
+  const [activeTab, setActiveTab] = useState<'portfolio' | 'risk' | 'history'>('portfolio');
 
   const API_URL = import.meta.env.VITE_API_URL || 'https://crypto-agent-api.onrender.com';
   const USER_ID = '8437583351';
@@ -172,21 +173,27 @@ function App() {
       {/* Вкладки */}
       <div style={styles.tabContainer}>
         <button
-          onClick={() => setShowRisk(false)}
-          style={styles.tabButton(!showRisk)}
+          onClick={() => setActiveTab('portfolio')}
+          style={styles.tabButton(activeTab === 'portfolio')}
         >
           📂 Портфель
         </button>
         <button
-          onClick={() => setShowRisk(true)}
-          style={styles.tabButton(showRisk)}
+          onClick={() => setActiveTab('risk')}
+          style={styles.tabButton(activeTab === 'risk')}
         >
           📊 Риски
+        </button>
+        <button
+          onClick={() => setActiveTab('history')}
+          style={styles.tabButton(activeTab === 'history')}
+        >
+          📜 История
         </button>
       </div>
 
       {/* Общая стоимость (показываем только в портфеле) */}
-      {!showRisk && (
+      {activeTab === 'portfolio' && (
         <div style={styles.totalCard}>
           <div style={styles.totalLabel}>Общая стоимость портфеля</div>
           <div style={styles.totalValue}>
@@ -196,8 +203,10 @@ function App() {
       )}
 
       {/* Контент в зависимости от вкладки */}
-      {showRisk ? (
+      {activeTab === 'risk' ? (
         <RiskAnalysis coins={coins} />
+      ) : activeTab === 'history' ? (
+        <TradeHistory coins={coins} />
       ) : (
         <>
           {coins.map((coin) => (
