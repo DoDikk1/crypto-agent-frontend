@@ -36,9 +36,14 @@ function App() {
     }
   };
 
-  useEffect(() => {
+// Автообновление каждые 30 секунд
+useEffect(() => {
+  const interval = setInterval(() => {
     fetchPortfolio();
-  }, []);
+  }, 30000); // 30 секунд
+
+  return () => clearInterval(interval); // очистка при размонтировании
+}, []);
 
   // Форматтер для чисел
   const formatCurrency = (value: number) => {
