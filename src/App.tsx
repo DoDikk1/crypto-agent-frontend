@@ -22,7 +22,12 @@ function App() {
   const fetchPortfolio = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/portfolio/${USER_ID}`);
+      const response = await fetch(`${API_URL}/portfolio/${USER_ID}`, {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       const data = await response.json();
 
       if (data.success && Array.isArray(data.coins)) {
@@ -46,6 +51,13 @@ function App() {
     }, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleTabChange = (tab: typeof activeTab) => {
+    setActiveTab(tab);
+    if (tab === 'portfolio') {
+      fetchPortfolio();
+    }
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('ru-RU', {
@@ -177,19 +189,19 @@ function App() {
       
       <div style={styles.tabContainer}>
         <button
-          onClick={() => setActiveTab('portfolio')}
+          onClick={() => handleTabChange('portfolio')}
           style={styles.tabButton(activeTab === 'portfolio')}
         >
           📂 Портфель
         </button>
         <button
-          onClick={() => setActiveTab('risk')}
+          onClick={() => handleTabChange('risk')}
           style={styles.tabButton(activeTab === 'risk')}
         >
           📊 Риски
         </button>
         <button
-          onClick={() => setActiveTab('history')}
+          onClick={() => handleTabChange('history')}
           style={styles.tabButton(activeTab === 'history')}
         >
           📜 История
