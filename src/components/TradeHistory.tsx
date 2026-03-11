@@ -22,8 +22,7 @@ function TradeHistory({ coins }: Props) {
   const fetchTrades = async () => {
     setLoading(true);
     try {
-      // TODO: Заменить на реальный API
-      // Сейчас моковые данные для теста
+      // Моковые данные для примера
       const mockTrades: Trade[] = [
         {
           id: 1,
@@ -42,29 +41,10 @@ function TradeHistory({ coins }: Props) {
           price: 3450.20,
           amount: 2.0,
           total: 6900.40,
-        },
-        {
-          id: 3,
-          date: '2026-03-08 22:10',
-          symbol: 'BTCUSDT',
-          type: 'Продажа',
-          price: 67800.00,
-          amount: 0.2,
-          total: 13560.00,
-          profit: 567.80,
-        },
-        {
-          id: 4,
-          date: '2026-03-07 11:45',
-          symbol: 'SOLUSDT',
-          type: 'Покупка',
-          price: 145.30,
-          amount: 10,
-          total: 1453.00,
-        },
+        }
       ];
       
-      setTimeout(() => setTrades(mockTrades), 500); // Имитация загрузки
+      setTimeout(() => setTrades(mockTrades), 500);
     } catch (error) {
       console.error('Ошибка загрузки истории:', error);
     } finally {
@@ -146,18 +126,7 @@ function TradeHistory({ coins }: Props) {
       fontSize: '12px',
       display: 'inline-block',
     },
-    profit: {
-      color: '#4caf50',
-    },
-    loss: {
-      color: '#f44336',
-    },
     loadingContainer: {
-      padding: '40px',
-      textAlign: 'center' as const,
-      color: '#888',
-    },
-    emptyContainer: {
       padding: '40px',
       textAlign: 'center' as const,
       color: '#888',
@@ -169,16 +138,6 @@ function TradeHistory({ coins }: Props) {
       <div style={styles.container}>
         <div style={styles.loadingContainer}>
           Загрузка истории сделок... 📜
-        </div>
-      </div>
-    );
-  }
-
-  if (trades.length === 0) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.emptyContainer}>
-          Пока нет сделок
         </div>
       </div>
     );
@@ -201,7 +160,6 @@ function TradeHistory({ coins }: Props) {
               <th style={styles.th}>Цена</th>
               <th style={styles.th}>Кол-во</th>
               <th style={styles.th}>Сумма</th>
-              <th style={styles.th}>Прибыль</th>
             </tr>
           </thead>
           <tbody>
@@ -217,13 +175,6 @@ function TradeHistory({ coins }: Props) {
                 <td style={styles.td}>${trade.price.toLocaleString()}</td>
                 <td style={styles.td}>{trade.amount}</td>
                 <td style={styles.td}>${trade.total.toLocaleString()}</td>
-                <td style={styles.td}>
-                  {trade.profit && (
-                    <span style={trade.profit >= 0 ? styles.profit : styles.loss}>
-                      {trade.profit > 0 ? '+' : ''}{trade.profit}$
-                    </span>
-                  )}
-                </td>
               </tr>
             ))}
           </tbody>
